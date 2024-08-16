@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const cors = require("cors")
-const { MongoClient, ServerApiVersion } = require("mongodb")
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb")
 require("dotenv").config()
 const port = process.env.PORT || 5000
 
@@ -26,6 +26,33 @@ async function run() {
     // await client.connect()
 
     const userCollection = client.db("gadgetHub").collection("users")
+    const allCategoriesCollection = client
+      .db("gadgetHub")
+      .collection("AllCategories")
+
+    // all categories
+    app.get("/allCategories", async (req, res) => {
+      const cursor = allCategoriesCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
+    //specific data get from all categories
+    app.get("/allCategories/:id", async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const options = {
+        projection: {
+          productName: 1,
+          productImage: 1,
+          description: 1,
+          price: 1,
+          category: 1,
+        },
+      }
+      const result = await allCategoriesCollection.findOne(query, options)
+      res.send(result)
+    })
 
     //user related api
     app.post("/users", async (req, res) => {
