@@ -37,6 +37,12 @@ async function run() {
       res.send(result)
     })
 
+    // reason for pagination
+    app.get("/allCategoriesCount", async (req, res) => {
+      const count = await allCategoriesCollection.estimatedDocumentCount()
+      res.send({ count })
+    })
+
     //specific data get from all categories
     app.get("/allCategories/:id", async (req, res) => {
       const id = req.params.id
