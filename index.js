@@ -32,8 +32,13 @@ async function run() {
 
     // all categories
     app.get("/allCategories", async (req, res) => {
-      const cursor = allCategoriesCollection.find()
-      const result = await cursor.toArray()
+      const page = parseInt(req.query.page)
+      const size = parseInt(req.query.size)
+      const result = await allCategoriesCollection
+        .find()
+        .skip(page * size)
+        .limit(size)
+        .toArray()
       res.send(result)
     })
 
