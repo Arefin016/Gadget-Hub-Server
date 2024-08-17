@@ -32,10 +32,20 @@ async function run() {
 
     // all categories
     app.get("/allCategories", async (req, res) => {
+      const filter = req.query
+      console.log(filter)
+      const query = {}
+      const options = {
+        sort: {
+          price: filter.sort === "asc" ? 1 : -1,
+        },
+      }
+
+      // This is pagination part
       const page = parseInt(req.query.page)
       const size = parseInt(req.query.size)
       const result = await allCategoriesCollection
-        .find()
+        .find(query, options)
         .skip(page * size)
         .limit(size)
         .toArray()
